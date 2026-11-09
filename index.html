@@ -1,0 +1,234 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tributo de Octubre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Oswald:wght@400;600&display=swap">
+<style>
+/* Escenario único y oscuro: telón dorado a pantalla completa, nombre al centro */
+:root{
+  --stage:#120a06;
+  --gold-hi:#f7dc8a;
+  --gold:#d4a437;
+  --gold-lo:#7a5414;
+  --ribbon:#a3121f;
+  --ink:#fff6dd;
+  --muted:#c9b48a;
+  --display:"Abril Fatface", Georgia, "Times New Roman", serif;
+  --label:"Oswald", "Arial Narrow", Arial, sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{margin:0;background:var(--stage);color:var(--ink);font-family:var(--label);overflow:hidden}
+.stage{position:relative;height:100%;overflow:hidden;
+  background:radial-gradient(ellipse at 50% 38%, #3b230e 0%, var(--stage) 70%)}
+.spot{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 1.2s;
+  background:radial-gradient(ellipse 55% 60% at 50% 45%, rgba(255,226,150,.28), transparent 70%)}
+.open .spot{opacity:1}
+
+/* Revelación */
+.reveal{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:1.2rem;padding-inline:16px;text-align:center}
+.eyebrow{letter-spacing:.35em;text-transform:uppercase;color:var(--muted);font-size:clamp(.8rem,2.2vw,1.1rem);
+  opacity:0;transform:translateY(10px);transition:all .8s .9s}
+.name{font-family:var(--display);font-size:clamp(3rem,12vw,9.5rem);line-height:.95;margin:0;text-wrap:balance;
+  background:linear-gradient(180deg,#fff3c4 0%,var(--gold-hi) 35%,var(--gold) 65%,var(--gold-lo) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 6px 24px rgba(212,164,55,.45));
+  opacity:0;transform:scale(.4);transition:transform 1.1s cubic-bezier(.2,1.6,.4,1) .7s, opacity .6s .7s}
+.motto{font-family:var(--label);font-weight:600;letter-spacing:.28em;font-size:clamp(1.1rem,4vw,2.4rem);
+  color:var(--ink);border-block:2px solid var(--gold);padding-block:.4em;
+  opacity:0;transform:translateY(16px);transition:all .8s 1.6s}
+.score{color:var(--muted);letter-spacing:.12em;font-size:clamp(.8rem,2vw,1rem);opacity:0;transition:opacity .8s 2.2s}
+.score b{color:var(--gold-hi);font-variant-numeric:tabular-nums}
+.open .eyebrow,.open .motto{opacity:1;transform:none}
+.open .name{opacity:1;transform:scale(1)}
+.open .score{opacity:1}
+
+/* Telón */
+.curtain{position:absolute;top:0;bottom:0;width:51%;z-index:3;
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.35),transparent 12%,transparent 85%,rgba(0,0,0,.45)),
+    repeating-linear-gradient(90deg,var(--gold-lo) 0,var(--gold) 3%,var(--gold-hi) 5%,var(--gold) 7.5%,var(--gold-lo) 10%);
+  box-shadow:inset 0 0 60px rgba(0,0,0,.5);
+  transition:transform 2.4s cubic-bezier(.7,0,.3,1)}
+.curtain.l{left:0;transform-origin:left}
+.curtain.r{right:0;transform-origin:right}
+.open .curtain.l{transform:translateX(-96%) scaleX(.5)}
+.open .curtain.r{transform:translateX(96%) scaleX(.5)}
+.valance{position:absolute;top:0;left:0;right:0;height:9vh;min-height:48px;z-index:5;
+  background:repeating-linear-gradient(90deg,var(--gold-lo),var(--gold-hi) 2.5%,var(--gold-lo) 5%);
+  box-shadow:0 8px 20px rgba(0,0,0,.6);
+  -webkit-mask:radial-gradient(circle at 50% 100%,transparent 18px,#000 19px) 0 0/48px 100%;
+          mask:radial-gradient(circle at 50% 100%,transparent 18px,#000 19px) 0 0/48px 100%}
+
+/* Cinta y nudo */
+.ribbon{position:absolute;left:0;right:0;top:50%;height:34px;margin-top:-17px;z-index:4;
+  background:linear-gradient(180deg,#d22a37,var(--ribbon) 45%,#5e0810);
+  box-shadow:0 4px 12px rgba(0,0,0,.5);transition:transform .9s ease-in,opacity .9s}
+.untied .ribbon{transform:translateY(60vh) rotate(4deg);opacity:0}
+.knot{position:absolute;left:50%;top:50%;width:120px;height:90px;margin:-45px 0 0 -60px;z-index:6;
+  border:0;background:none;cursor:pointer;padding:0;transition:transform .9s ease-in,opacity .9s}
+.knot:focus-visible{outline:3px dashed var(--gold-hi);outline-offset:6px;border-radius:12px}
+.knot svg{width:100%;height:100%;overflow:visible}
+.ready .knot{animation:tug 1.1s ease-in-out infinite}
+.untied .knot{transform:translateY(60vh) rotate(-30deg);opacity:0;animation:none}
+@keyframes tug{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg) scale(1.05)}75%{transform:rotate(6deg) scale(1.05)}}
+.hint{position:absolute;left:0;right:0;top:calc(50% + 60px);z-index:6;text-align:center;
+  letter-spacing:.3em;text-transform:uppercase;font-size:.85rem;color:var(--ink);
+  text-shadow:0 2px 6px #000;opacity:0;transition:opacity .5s}
+.ready .hint{opacity:1}
+.untied .hint{opacity:0}
+
+/* Inicio */
+.start{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:1.4rem;background:rgba(10,5,2,.82);padding-inline:16px;text-align:center;transition:opacity .6s}
+.start h1{font-family:var(--display);font-weight:400;color:var(--gold-hi);font-size:clamp(2rem,7vw,4rem);margin:0}
+.start p{margin:0;color:var(--muted);letter-spacing:.2em;text-transform:uppercase;font-size:.85rem}
+.btn{font-family:var(--label);font-weight:600;letter-spacing:.25em;text-transform:uppercase;font-size:1rem;
+  color:var(--stage);background:linear-gradient(180deg,var(--gold-hi),var(--gold));border:0;border-radius:999px;
+  padding:.9em 2.2em;cursor:pointer;box-shadow:0 6px 24px rgba(212,164,55,.4)}
+.btn:focus-visible{outline:3px solid var(--ink);outline-offset:4px}
+.started .start{opacity:0;pointer-events:none}
+
+.replay{position:absolute;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:12;font-size:.75rem;padding:.6em 1.2em;
+  opacity:0;pointer-events:none;transition:opacity .6s 3s}
+.open .replay{opacity:1;pointer-events:auto}
+
+canvas{position:absolute;inset:0;z-index:8;pointer-events:none}
+@media (prefers-reduced-motion:reduce){
+  .curtain,.name,.motto,.eyebrow,.ribbon,.knot{transition-duration:.01s!important;transition-delay:0s!important}
+  .ready .knot{animation:none}
+}
+</style>
+</head><body>
+
+<div class="stage" id="stage">
+  <div class="spot"></div>
+
+  <div class="reveal" aria-live="polite">
+    <div class="eyebrow">Este mes el tributo lo paga</div>
+    <h2 class="name">Samantha<br>Díaz</h2>
+    <div class="motto">NO PAIN · NO LEARN</div>
+    <div class="score">Octubre · <b>25</b> puntos</div>
+  </div>
+
+  <div class="curtain l"></div>
+  <div class="curtain r"></div>
+  <div class="valance"></div>
+  <div class="ribbon"></div>
+  <button class="knot" id="knot" aria-label="Soltar el nudo y abrir el telón" disabled>
+    <svg viewBox="0 0 120 90" aria-hidden="true">
+      <defs><linearGradient id="rb" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#e03a46"/><stop offset=".5" stop-color="#a3121f"/><stop offset="1" stop-color="#5e0810"/></linearGradient></defs>
+      <path d="M60 45 C30 5,0 15,8 45 C0 75,30 85,60 45Z" fill="url(#rb)" stroke="#4a050b" stroke-width="2"/>
+      <path d="M60 45 C90 5,120 15,112 45 C120 75,90 85,60 45Z" fill="url(#rb)" stroke="#4a050b" stroke-width="2"/>
+      <path d="M52 50 L38 88 L48 82 L54 90 L58 52Z" fill="#8e0f1b"/>
+      <path d="M68 50 L82 88 L72 82 L66 90 L62 52Z" fill="#8e0f1b"/>
+      <rect x="48" y="33" width="24" height="24" rx="7" fill="url(#rb)" stroke="#4a050b" stroke-width="2"/>
+    </svg>
+  </button>
+  <div class="hint">Suelta el nudo</div>
+
+  <canvas id="fx"></canvas>
+
+  <div class="start">
+    <p>Tributo · Octubre 2026</p>
+    <h1>¿Quién paga este mes?</h1>
+    <button class="btn" id="go">Comenzar</button>
+  </div>
+
+  <button class="btn replay" id="replay">Repetir</button>
+</div>
+
+<script>
+const stage=document.getElementById('stage'),knot=document.getElementById('knot');
+let ac,master,suspense=null;
+
+function ctx(){
+  if(!ac){ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=.8;master.connect(ac.destination);}
+  if(ac.state==='suspended')ac.resume();
+  return ac;
+}
+function noiseBuf(sec){const b=ac.createBuffer(1,ac.sampleRate*sec,ac.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return b;}
+
+/* Suspenso: bordón grave, trémolo de cuerdas en semitono y redoble de timbal que crece */
+function startSuspense(){
+  ctx();const t=ac.currentTime,out=ac.createGain();out.gain.setValueAtTime(0,t);out.gain.linearRampToValueAtTime(.9,t+1.5);out.connect(master);
+  const nodes=[];
+  [55,58.27].forEach(f=>{const o=ac.createOscillator();o.type='sawtooth';o.frequency.value=f;
+    const lp=ac.createBiquadFilter();lp.type='lowpass';lp.frequency.value=260;const g=ac.createGain();g.gain.value=.18;
+    o.connect(lp).connect(g).connect(out);o.start();nodes.push(o);});
+  [[220,0],[233.08,.5]].forEach(([f])=>{const o=ac.createOscillator();o.type='sawtooth';o.frequency.value=f;
+    const lp=ac.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1400;
+    const g=ac.createGain();g.gain.value=.05;const lfo=ac.createOscillator();lfo.frequency.value=9;const lg=ac.createGain();lg.gain.value=.045;
+    lfo.connect(lg).connect(g.gain);o.connect(lp).connect(g).connect(out);o.start();lfo.start();nodes.push(o,lfo);});
+  // redoble
+  const nb=noiseBuf(2),roll=ac.createBufferSource();roll.buffer=nb;roll.loop=true;
+  const bp=ac.createBiquadFilter();bp.type='bandpass';bp.frequency.value=180;bp.Q.value=.8;
+  const rg=ac.createGain();rg.gain.setValueAtTime(.02,t);rg.gain.linearRampToValueAtTime(.55,t+25);
+  const trem=ac.createOscillator();trem.frequency.value=14;const tg=ac.createGain();tg.gain.value=.2;trem.connect(tg).connect(rg.gain);
+  roll.connect(bp).connect(rg).connect(out);roll.start();trem.start();nodes.push(roll,trem);
+  // golpes graves cada 2 s
+  const hits=setInterval(()=>timp(70,.6),2000);timp(70,.6);
+  suspense={out,nodes,hits};
+}
+function stopSuspense(){
+  if(!suspense)return;const t=ac.currentTime;clearInterval(suspense.hits);
+  suspense.out.gain.cancelScheduledValues(t);suspense.out.gain.setValueAtTime(suspense.out.gain.value,t);suspense.out.gain.linearRampToValueAtTime(0,t+.25);
+  const n=suspense.nodes;setTimeout(()=>n.forEach(x=>{try{x.stop()}catch(e){}}),400);suspense=null;
+}
+function timp(f,v,when){const t=when??ac.currentTime,o=ac.createOscillator(),g=ac.createGain();o.type='sine';
+  o.frequency.setValueAtTime(f*1.6,t);o.frequency.exponentialRampToValueAtTime(f,t+.15);
+  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+1.2);o.connect(g).connect(master);o.start(t);o.stop(t+1.3);}
+function crash(t,v=.5){const s=ac.createBufferSource();s.buffer=noiseBuf(3);const hp=ac.createBiquadFilter();hp.type='highpass';hp.frequency.value=5000;
+  const g=ac.createGain();g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+2.6);s.connect(hp).connect(g).connect(master);s.start(t);}
+function brass(freqs,t,dur,v=.12){freqs.forEach(f=>{[0,4].forEach(det=>{const o=ac.createOscillator();o.type='sawtooth';o.frequency.value=f;o.detune.value=det;
+  const lp=ac.createBiquadFilter();lp.type='lowpass';lp.frequency.setValueAtTime(600,t);lp.frequency.linearRampToValueAtTime(3200,t+.06);lp.frequency.linearRampToValueAtTime(1800,t+dur);
+  const g=ac.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.03);g.gain.setValueAtTime(v,t+dur-.06);g.gain.linearRampToValueAtTime(0,t+dur);
+  o.connect(lp).connect(g).connect(master);o.start(t);o.stop(t+dur+.05);});});}
+
+/* Fanfarria en Do mayor: tresillos y acorde final con platillo */
+function fanfare(){
+  const t=ac.currentTime+.05,C=[261.63,329.63,392],F=[349.23,440,523.25],G=[392,493.88,587.33],C2=[523.25,659.25,783.99];
+  const s=[[C,0,.14],[C,.16,.14],[C,.32,.14],[C,.5,.45],[F,1.0,.35],[G,1.4,.35],[C2,1.8,2.2]];
+  s.forEach(([ch,o,d])=>brass(ch,t+o,d));
+  timp(65,.9,t);timp(65,.9,t+.5);timp(98,.9,t+1.8);crash(t+.5,.35);crash(t+1.8,.6);
+}
+function untieSfx(){const t=ac.currentTime,s=ac.createBufferSource();s.buffer=noiseBuf(1);const bp=ac.createBiquadFilter();bp.type='bandpass';
+  bp.frequency.setValueAtTime(3000,t);bp.frequency.exponentialRampToValueAtTime(400,t+.5);const g=ac.createGain();g.gain.setValueAtTime(.4,t);g.gain.exponentialRampToValueAtTime(.001,t+.6);
+  s.connect(bp).connect(g).connect(master);s.start(t);}
+
+/* Confeti */
+const cv=document.getElementById('fx'),c2=cv.getContext('2d');let parts=[],raf=null;
+function size(){cv.width=innerWidth*devicePixelRatio;cv.height=innerHeight*devicePixelRatio;}
+addEventListener('resize',size);size();
+const cols=['#f7dc8a','#d4a437','#fff6dd','#d22a37','#ffffff','#e8b84a'];
+function burst(n,x){for(let i=0;i<n;i++){parts.push({x:x*cv.width,y:cv.height*.55,vx:(Math.random()-.5)*28*devicePixelRatio,vy:-(Math.random()*26+10)*devicePixelRatio,
+  w:(Math.random()*8+5)*devicePixelRatio,h:(Math.random()*12+6)*devicePixelRatio,r:Math.random()*6,vr:(Math.random()-.5)*.4,c:cols[i%cols.length],life:0});}
+  if(!raf)raf=requestAnimationFrame(tick);}
+function rain(n){for(let i=0;i<n;i++)parts.push({x:Math.random()*cv.width,y:-Math.random()*cv.height*.6,vx:(Math.random()-.5)*2,vy:Math.random()*3+2,
+  w:(Math.random()*8+5)*devicePixelRatio,h:(Math.random()*12+6)*devicePixelRatio,r:Math.random()*6,vr:(Math.random()-.5)*.3,c:cols[i%cols.length],life:0});
+  if(!raf)raf=requestAnimationFrame(tick);}
+function tick(){c2.clearRect(0,0,cv.width,cv.height);
+  parts.forEach(p=>{p.vy+=.45*devicePixelRatio*.5;p.vx*=.985;p.vy=Math.min(p.vy,6*devicePixelRatio);p.x+=p.vx+Math.sin(p.life/8)*1.5;p.y+=p.vy;p.r+=p.vr;p.life++;
+    c2.save();c2.translate(p.x,p.y);c2.rotate(p.r);c2.scale(1,Math.cos(p.life/6));c2.fillStyle=p.c;c2.fillRect(-p.w/2,-p.h/2,p.w,p.h);c2.restore();});
+  parts=parts.filter(p=>p.y<cv.height+40);raf=parts.length?requestAnimationFrame(tick):null;}
+
+/* Flujo */
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+document.getElementById('go').addEventListener('click',()=>{
+  startSuspense();stage.classList.add('started');
+  setTimeout(()=>{stage.classList.add('ready');knot.disabled=false;knot.focus();},900);
+});
+knot.addEventListener('click',()=>{
+  knot.disabled=true;stopSuspense();untieSfx();stage.classList.add('untied');
+  setTimeout(()=>{stage.classList.add('open');fanfare();},500);
+  setTimeout(()=>{if(!reduce){burst(140,.2);burst(140,.8);}},1300);
+  setTimeout(()=>{if(!reduce){burst(180,.5);rain(220);}},2300);
+  setTimeout(()=>{if(!reduce)rain(200);},4000);
+});
+document.getElementById('replay').addEventListener('click',()=>{
+  stage.classList.remove('open','untied','ready');knot.disabled=true;parts=[];
+  setTimeout(()=>{startSuspense();stage.classList.add('ready');knot.disabled=false;},2600);
+});
+</script>
+</body></html>
